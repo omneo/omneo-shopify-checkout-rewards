@@ -5,16 +5,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>React and Webpack4</title>
+  <title>Shopify Omneo Rewards</title>
 </head>
 <body>
-  <section id="omneoRewards"></section>
+  <div class="order-summary__sections">
+    <div class="order-summary__section"><p>Product list section</p></div>
+  </div>
   <script>
-    omneoShopify.build({
-      elementId: 'omneoRewards',
-      url: null,
-      token: null,
-      profileId: null
+    OmneoShopifyCheckoutRewards.build({
+      url: '',
+      token: '',
+      lineItemId: 0
     })
   </script>
 </body>

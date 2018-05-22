@@ -1,17 +1,15 @@
 import fetch from 'unfetch';
 export default {
     call(request){
-        const url = window.omneoEnvironment.url+request.url;
-        const token = window.omneoEnvironment.token;
         return fetch(
-            url,
+            request.url,
             {
                 method: request.method,
                 body: request.data ? JSON.stringify(request.data) : {},
                 headers: new Headers({
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': request.token ? 'Bearer '+request.token : null
                 })
             })
             .then(response=>{
