@@ -1,51 +1,36 @@
 import preact from 'preact';
 import request from '../services/request';
 
+import RewardPlaceholder from '../components/RewardPlaceholder';
 import RewardField from '../components/RewardField';
+import RewardError from '../components/RewardError';
 
 export default class extends preact.Component {
     constructor() {
         super();
-        const environment = Object.assign({}, window.OmneoShopifyCheckoutRewards_config)
-
+        const environment = Object.assign({}, window.OmneoShopifyCheckoutRewards_config);
+        delete window.OmneoShopifyCheckoutRewards_config;
         this.state = {
             init: false,
             balances: false,
-            environment: environment,
-            rewardApplied: this.isRewardApplied(environment)
+            environment: environment
         };
-        delete window.OmneoShopifyCheckoutRewards_config;
         this.requestBalance();
-    }
-
-    isRewardApplied(environment){
-        const products = document.getElementsByClassName('product');
-        for(let index in products){
-            const product = products[index];
-            if(product && product.dataset && product.dataset.variantId && product.dataset.variantId == environment.lineItemId){
-                product.style = "display:none !important";
-                return {
-                    index: parseInt(index)+1, // Because Shopify uses n+1 line numbers
-                    product
-                }
-            }
-        }
-        return false
     }
 
     requestBalance() {
         const {environment} = this.state;
         request.call({
-            url: environment.url+'/v3/profiles/'+environment.profileId+'/balances',
+            url: environment.omneoUrl+'/v3/profiles/'+environment.omneoProfileId+'/balances',
             method: 'GET',
-            token: environment.token
+            token: environment.omneoToken
         }).then(response=> {
             this.setState({
                 init: true,
                 balances: response.data
             })
         }).catch(error=> {
-            this.setState({
+                this.setState({
                 init: true,
                 balances: false
             })
@@ -53,15 +38,18 @@ export default class extends preact.Component {
     }
 
     render(props, state) {
-        const {init, balances, environment, rewardApplied} = state;
+        const {init, balances, environment} = state;
         if(!init){
-            return <h4>Fetching rewards</h4>
+            return <RewardPlaceholder/>
         }
         if(!balances){
-            return <h4 style={{color:'red'}}>Error getting balance</h4>
+            return <RewardError/>
         }
-        return (
-            <RewardField balance={balances.combined_balance_dollars || 0} environment={environment} rewardApplied={rewardApplied}/>
+        return(
+            <RewardField
+                maxBalance={balances.combined_balance_dollars || 0}
+                environment={environment}
+            />
         )
     }
 }

@@ -21,6 +21,7 @@
     "webpack-cli": "^2.0.10"
   },
   "dependencies": {
+    "document-ready-promise": "^3.0.1",
     "preact": "^8.2.9",
     "unfetch": "^3.0.0"
   }

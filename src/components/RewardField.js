@@ -2,15 +2,25 @@ import preact from 'preact';
 export default class extends preact.Component {
     constructor(props) {
         super(props);
+        const {environment} = this.props;
+
         this.state = {
-            maxBalance: this.props.balance,
-            balance: this.props.balance,
+            redeem: environment.rewardApplied !== false ? environment.rewardApplied : this.getMax(),
             loading: false
         };
 
         this.onChange = this.onChange.bind(this);
         this.applyRewards = this.applyRewards.bind(this);
         this.removeRewards = this.removeRewards.bind(this);
+    }
+
+    getMax(){
+        const {environment, maxBalance} = this.props;
+        const {subTotal} = environment;
+        if(subTotal === null){return maxBalance}
+        let subTotalValue = parseInt(subTotal) / 10;
+
+        return subTotalValue < maxBalance ? subTotal : maxBalance;
     }
 
     validate(string){
@@ -29,14 +39,14 @@ export default class extends preact.Component {
 
         if(value !== ''){
             if(!this.validate(value)){return;}
-            if(parseFloat(value) > this.state.maxBalance){
-                this.setState({balance: this.state.maxBalance});
+            if(parseFloat(value) > this.getMax()){
+                this.setState({redeem: this.getMax()});
                 return;
             }
         }
 
         this.setState({
-            balance: value
+            redeem: value
         })
     }
 
@@ -55,70 +65,72 @@ export default class extends preact.Component {
 
     applyRewards(e){
         if(e){e.preventDefault()}
+        const {environment} = this.props;
+        const {redeem} = this.state;
+        const {rewardVariantId} = environment;
 
-        const {environment, balance} = this.props;
-        const {lineItemId} = environment;
-
-        // TODO add signature
-        let properties = {
-            id: lineItemId,
-            quantity: 1,
-            "properties[value]":balance,
-            "properties[signature]":"lskdhfksljdhf"
-        };
-        let queryString = Object.keys(properties).map(key=>key+'='+properties[key]).join('&');
-        this.createIframe("/cart/add?"+queryString)
+        this.createIframe("/cart/add?id="+rewardVariantId+"&quantity=1&properties[amount]="+redeem)
     }
 
     removeRewards(e){
         if(e){e.preventDefault()}
-        const {rewardApplied} = this.props;
-        this.createIframe("/cart/change?line="+rewardApplied.index+"&quantity=0")
+        const {rewardAppliedIndex} = this.props.environment;
+        this.createIframe("/cart/change?line="+rewardAppliedIndex+"&quantity=0")
     }
 
     buttonClasses(){
-        const {balance, loading} = this.state;
+        const {maxBalance} = this.props;
+        const {redeem, loading} = this.state;
         let classes = ["field__input-btn","btn"];
-        if(!balance || balance === '0' || balance === ''){classes.push("btn--disabled")}
+        if(!redeem || redeem == 0 || redeem === '' || maxBalance == 0){classes.push("btn--disabled")}
         if(loading){classes.push("btn--loading")}
         return classes.join(' ');
     }
 
+    isRewardApplied(){
+        return this.props.environment.rewardApplied !== false;
+    }
+
     render(props, state) {
-        const {rewardApplied} = props;
-        const {balance, loading} = state;
-        const buttonDisabled = loading || balance === '' || balance === '0';
+        const {maxBalance} = props;
+        const {redeem, loading} = state;
+        const buttonDisabled = loading || redeem === '' || redeem == 0 || maxBalance == 0;
+
+        const isRewardApplied = this.isRewardApplied();
+
         return (
             <div className="fieldset">
-                <form onSubmit={rewardApplied ? this.removeRewards : this.applyRewards}>
+                <form onSubmit={isRewardApplied ? this.removeRewards : this.applyRewards}>
                     <div className="field field--show-floating-label">
+                        <h3 style="margin-bottom: 20px;">Loyalty rewards available: ${maxBalance}</h3>
                         <div className="field__input-btn-wrapper">
                             <div className="field__input-wrapper">
-                                <label className="field__label field__label--visible" htmlFor="checkout_reduction_code">{rewardApplied ? "Applied" : "Available"} rewards ($)</label>
+                                <label className="field__label field__label--visible" htmlFor="checkout_reduction_code">Rewards {isRewardApplied ? "applied" : "available"} ($)</label>
                                 <input
-                                    placeholder={rewardApplied ? "Applied rewards ($)" : "Available rewards ($)"}
+                                    placeholder="0"
                                     className="field__input"
                                     size="30"
                                     type="text"
-                                    value={balance}
-                                    id="balance"
-                                    disabled={loading || rewardApplied}
+                                    value={redeem}
+                                    id="redeem"
+                                    disabled={loading || isRewardApplied}
                                     onKeyPress={this.onChange}
                                     onInput={this.onChange}
-                                    style={rewardApplied?'opacity:0.5':''}
+                                    style={isRewardApplied?'opacity:0.5':''}
                                 />
                             </div>
                             <button
                                 type="submit"
-                                onClick={rewardApplied ? this.removeRewards : this.applyRewards}
+                                onClick={isRewardApplied ? this.removeRewards : this.applyRewards}
                                 className={this.buttonClasses()}
                                 style={buttonDisabled ? "background-color:#c8c8c8 !important":""}
                                 disabled={buttonDisabled}>
-                                <span className="btn__content visually-hidden-on-mobile">{rewardApplied ? "Remove" : "Apply"}</span>
+                                <span className="btn__content visually-hidden-on-mobile">{isRewardApplied ? "Remove" : "Apply"}</span>
                                 <i className="btn__content shown-on-mobile icon icon--arrow" />
                                 <i className="btn__spinner icon icon--button-spinner" />
                             </button>
                         </div>
+                        <small style="margin-top: 10px;display:block;line-height:1;">Rewards are not redeemable against gift cards or shipping</small>
                     </div>
                 </form>
             </div>
