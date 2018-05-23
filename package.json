@@ -1,7 +1,7 @@
 {
-  "name": "omneo-shape-reward-balance",
-  "version": "0.0.1",
-  "description": "Search app using React",
+  "name": "omneo-shopify-checkout-rewards",
+  "version": "0.0.2",
+  "description": "Omneo reward component for Shopify checkout",
   "main": "index.js",
   "scripts": {
     "dev": "webpack --mode development",

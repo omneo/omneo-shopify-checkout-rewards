@@ -1,8 +1,6 @@
 # Shopify Checkout Reward Component
 A small package for checking and applying an Omneo reward balance to Shopify Checkout. This component uses `Preact` for dom manipulation and `Unfetch` to polyfill modern `fetch` functionality.
 
-***
-
 ## Shopify install
 Installing this component includes 4 steps:
 
@@ -70,8 +68,6 @@ This is the shopify script code
 
 ### Hide the Loyalty Reward product from public and go live
 You're (almost) all done! Loyalty rewards should now be active and ready for customers to checkout. Just ensure that the the Loyalty Reward placeholder product is not visible in any collections or publicly facing product views.
-
-***
 
 ## DEVELOPMENT
 ### Dependencies
