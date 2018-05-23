@@ -37,6 +37,7 @@ Once the variables are added, add the following code to complete the snippet:
   .product[data-variant-id="{{rewardVariantId}}"]{display:none}
   .product[data-variant-id="{{rewardVariantId}}"]:first-child + tr .product__description{padding-top:0;}
   .product[data-variant-id="{{rewardVariantId}}"]:first-child + tr .product__image{padding-top:0;}
+  .product[data-variant-id="{{rewardVariantId}}"]:first-child + tr .product__price{padding-top:0;}
 </style>
 <script type="text/javascript" src="//cdn.omneo.io/omneo-shopify-checkout-rewards.js"></script>
 <script>
