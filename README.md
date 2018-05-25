@@ -2,7 +2,7 @@
 A small package for checking and applying an Omneo reward balance to Shopify Checkout. This component uses `Preact` for dom manipulation and `Unfetch` to polyfill modern `fetch` functionality.
 
 ## Shopify install
-Installing this component includes 4 steps:
+Installing this component includes a number of quick steps:
 
 ### Add Loyalty Reward product
 Add a new product to Shopify with the description of `Loyalty Reward` or eqivalent and copy the variant ID. [Finding your Variant ID](https://help.shopify.com/themes/customization/products/variants/find-variant-id)
@@ -14,16 +14,12 @@ Create a new snippet in your Shopify theme called `omneo-checkout-rewards.liquid
 ```
 {% assign omneoUrl = '' %}
 {% assign omneoToken = '' %}
-{% assign omneoProfileId = '' %}
-{% assign rewardVariantId = 0 %}
 ```
 Once the variables are added, add the following code to complete the snippet:
 ```
 {% assign rewardApplied = false %}
-{% assign rewardAppliedIndex = 0 %}
 {% for line_item in checkout.line_items %}
   	{% if line_item.variant_id == rewardVariantId %}
-		{% assign rewardAppliedIndex = forloop.index %}
 		{% for property in line_item.properties %}
 			{% if property[0] == 'amount' %}
 				{% assign rewardApplied = property[1] %}
@@ -31,11 +27,18 @@ Once the variables are added, add the following code to complete the snippet:
 		{% endfor %}
     {% endif %}
 {% endfor %}
+{% assign omneoToken = false %}
+{% assign omneoProfileId = false %}
+{% if customer != blank %}
+	{% if customer.metafields.omneo != blank %}
+		{% assign omneoToken = customer.metafields.omneo.token %}
+		{% assign omneoProfileId = customer.id %}
+	{% endif %}
+{% endif %}
 <style>
   .product[data-variant-id="{{rewardVariantId}}"]{display:none}
   .product[data-variant-id="{{rewardVariantId}}"]:first-child + tr .product__description{padding-top:0;}
   .product[data-variant-id="{{rewardVariantId}}"]:first-child + tr .product__image{padding-top:0;}
-  .product[data-variant-id="{{rewardVariantId}}"]:first-child + tr .product__price{padding-top:0;}
 </style>
 <script type="text/javascript" src="//cdn.omneo.io/omneo-shopify-checkout-rewards.js"></script>
 <script>
@@ -45,8 +48,7 @@ Once the variables are added, add the following code to complete the snippet:
       omneoProfileId: '{{omneoProfileId}}',
       rewardVariantId: {{rewardVariantId}},
       subTotal: {{ checkout.subtotal_price}},
-      rewardApplied: {{rewardApplied}},
-      rewardAppliedIndex: {{rewardAppliedIndex}}
+      rewardApplied: {{rewardApplied}}
     })    
 </script>
 ```
@@ -56,6 +58,21 @@ Include the following code immediately before the head closing tag `</head>` in 
 ```
 {% include 'omneo-checkout-rewards' %}
 ```
+
+### Add Omneo Token page template
+Create a page template named page.omneoViewToken.liquid and add the following code:
+```
+<div style="display:none">
+{% if customer.metafields.omneo != blank %}
+	{% if customer.metafields.omneo.token != blank %}
+  		<TOKEN>{{customer.metafields.omneo.token}}<TOKEN>
+	{% endif %}
+{% endif %}
+</div>
+```
+
+### Create the token page
+Make a new page in Shopify with the url `/pages/omneoviewtoken` and publish this page. This page should not be indexed or linked to from any other area.
 
 ### Add Shopify Script
 If you haven't already installed the Shopify Scripts app, follow the instructions here: [Script Editor](https://apps.shopify.com/script-editor)

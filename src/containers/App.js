@@ -15,25 +15,58 @@ export default class extends preact.Component {
             balances: false,
             environment: environment
         };
-        this.requestBalance();
+        this.handleRequest();
     }
 
-    requestBalance() {
+    handleRequest(){
         const {environment} = this.state;
-        request.call({
-            url: environment.omneoUrl+'/v3/profiles/'+environment.omneoProfileId+'/balances',
+        const {omneoUrl, omneoToken, omneoProfileId} = environment;
+        if(omneoToken){
+            this.requestBalance(omneoToken);
+        }else{
+            this.refreshToken(omneoProfileId).then(response=>{
+                this.requestBalance(response.data.token);
+            });
+        }
+    }
+
+    refreshToken(){
+        const {environment} = this.state;
+        const {omneoUrl, omneoProfileId} = environment;
+        return request.refreshToken({
+            url: omneoUrl+'/auth/token',
+            id: omneoProfileId
+        }).then(response=>{
+            return response.data && response.data.token ? response.data.token : false;
+        }).catch(error=>{
+            return false;
+        });
+    }
+
+    requestBalance(token, attempt = false) {
+        const {environment} = this.state;
+        const {omneoUrl} = environment;
+       request.call({
+            url: omneoUrl+'/proxy/balances',
             method: 'GET',
-            token: environment.omneoToken
+            token: token
         }).then(response=> {
+           console.log("success", response);
             this.setState({
                 init: true,
                 balances: response.data
             })
         }).catch(error=> {
-                this.setState({
-                init: true,
-                balances: false
-            })
+           error.then(error=>{
+               console.log("Attempt refresh", error);
+               if(!attempt && error.response.status === 401){
+                   this.refreshToken().then(token=>{
+                       if(token){
+                           this.requestBalance(token,true);
+                       }
+                   })
+               }
+           })
         })
     }
 

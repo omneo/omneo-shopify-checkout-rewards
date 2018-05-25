@@ -5,7 +5,7 @@ export default class extends preact.Component {
             <div className="fieldset">
                 <div className="field field--show-floating-label">
                     <h3 style="margin-bottom: 20px;">Loyalty rewards</h3>
-                    <p>Error getting rewards</p>
+                    <p>There was a problem getting rewards.</p>
                 </div>
             </div>
         )

@@ -50,32 +50,49 @@ export default class extends preact.Component {
         })
     }
 
-    createIframe(url){
-        this.setState({loading:true});
-        let cartWindow = document.createElement("iframe");
-        cartWindow.src = url;
-        cartWindow.style = "display:none";
-        document.body.appendChild(cartWindow);
-        cartWindow.contentDocument.close();
-        document.body.removeChild(cartWindow);
-        setTimeout(()=>{
-            location.reload();
-        },100)
-    }
-
     applyRewards(e){
         if(e){e.preventDefault()}
         const {environment} = this.props;
         const {redeem} = this.state;
         const {rewardVariantId} = environment;
 
-        this.createIframe("/cart/add?id="+rewardVariantId+"&quantity=1&properties[amount]="+redeem)
+        fetch('/cart/add.js',{
+            method:"POST",
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                quantity: 1,
+                id: rewardVariantId,
+                properties: {
+                    amount: redeem
+                }
+            })
+        }).then(function(response){
+            if(response.ok){ location.reload();}
+        });
     }
 
     removeRewards(e){
         if(e){e.preventDefault()}
-        const {rewardAppliedIndex} = this.props.environment;
-        this.createIframe("/cart/change?line="+rewardAppliedIndex+"&quantity=0")
+        const {rewardVariantId} = this.props.environment;
+        fetch('/cart/update.js',{
+            method:"POST",
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                updates: {
+                    [rewardVariantId]: 0
+                }
+            })
+        }).then(function(response){
+            if(response.ok){ location.reload();}
+        });
     }
 
     buttonClasses(){
