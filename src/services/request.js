@@ -12,7 +12,7 @@ export default {
             })
             .then(response=>{
                 if(!response.ok){throw response;}
-                return fetch('/pages/omneoviewtoken',{credentials: 'include'}).then(function(response){
+                return fetch('/pages/omneotoken',{credentials: 'include'}).then(function(response){
                     return response.text().then(function(text){
                         var myRegexp = /\<TOKEN\>(.*)\<TOKEN\>/;
                         var match = myRegexp.exec(text);
