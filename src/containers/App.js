@@ -51,14 +51,12 @@ export default class extends preact.Component {
             method: 'GET',
             token: token
         }).then(response=> {
-           console.log("success", response);
             this.setState({
                 init: true,
                 balances: response.data
             })
         }).catch(error=> {
            error.then(error=>{
-               console.log("Attempt refresh", error);
                if(!attempt && error.response.status === 401){
                    this.refreshToken().then(token=>{
                        if(token){

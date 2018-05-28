@@ -55,6 +55,9 @@ export default class extends preact.Component {
         const {environment} = this.props;
         const {redeem} = this.state;
         const {rewardVariantId} = environment;
+        this.setState({
+            loading: true
+        });
 
         fetch('/cart/add.js',{
             method:"POST",
@@ -78,6 +81,9 @@ export default class extends preact.Component {
     removeRewards(e){
         if(e){e.preventDefault()}
         const {rewardVariantId} = this.props.environment;
+        this.setState({
+            loading: true
+        });
         fetch('/cart/update.js',{
             method:"POST",
             credentials: 'include',

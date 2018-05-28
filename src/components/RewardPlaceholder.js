@@ -1,4 +1,5 @@
 import preact from 'preact';
+import Spinner from './Spinner';
 export default class extends preact.Component {
     render() {
         return (
@@ -7,7 +8,7 @@ export default class extends preact.Component {
                     <h3 style="margin-bottom: 20px;">Loyalty rewards</h3>
                     <div className="field__input-btn-wrapper">
                         <div className="field__input-wrapper">
-                            <label className="field__label field__label--visible" htmlFor="checkout_reduction_code">Rewards</label>
+                            <Spinner/>
                             <input
                                 placeholder="Available rewards ($)"
                                 className="field__input"
