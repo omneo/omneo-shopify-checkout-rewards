@@ -18,9 +18,9 @@ export default class extends preact.Component {
         const {environment, maxBalance} = this.props;
         const {subTotal} = environment;
         if(subTotal === null){return maxBalance}
-        let subTotalValue = parseInt(subTotal) / 10;
+        let subTotalValue = parseInt(subTotal) / 100;
 
-        return subTotalValue < maxBalance ? subTotal : maxBalance;
+        return subTotalValue < maxBalance ? subTotalValue : maxBalance;
     }
 
     validate(string){
