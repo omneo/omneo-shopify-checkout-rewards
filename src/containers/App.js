@@ -47,7 +47,7 @@ export default class extends preact.Component {
         const {environment} = this.state;
         const {omneoUrl} = environment;
        request.call({
-            url: omneoUrl+'/proxy/balances',
+            url: omneoUrl+'/proxy/me/balances',
             method: 'GET',
             token: token
         }).then(response=> {
