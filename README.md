@@ -80,7 +80,45 @@ If you haven't already installed the Shopify Scripts app, follow the instruction
 Navigate to the Shopify Scripts app and create a new `Line Items` script with a blank template. Copy the following script and ensure the reward variable id is updated to reflect your own Loyalty Reward product:
 
 ```
-This is the shopify script code
+LOYALTY_ITEM_VARIATION_ID = 7289148866595;
+
+def get_applied_loyalty_rewards(line_items)
+ reward_amount = 0;
+
+ if line_items.kind_of?(Array)
+   line_items.each do |line_item|
+     if line_item.variant.id == LOYALTY_ITEM_VARIATION_ID
+       next unless line_item.properties['amount']
+       reward_amount += Integer(line_item.properties['amount']*100)
+     end
+   end
+ end
+
+ reward_amount
+end
+
+def apply_loyalty_rewards(line_items)
+ reward_amount = get_applied_loyalty_rewards(line_items)
+ reward_remainder = 0.0
+ total_reward_elegible_price = Integer(Input.cart.subtotal_price.cents.to_s)
+
+ if line_items.kind_of?(Array)
+   line_items.each do |line_item|
+      price = Integer(line_item.line_price.cents.to_s)
+      if price > 0
+       proportion =  price / total_reward_elegible_price
+       discount_float = (reward_amount * proportion) + reward_remainder
+       discount = discount_float.round
+       reward_remainder =  discount_float - discount
+       line_item.change_line_price(line_item.line_price - Money.new(cents: discount), message: 'Loyalty Rewards')
+      end
+   end
+ end
+end
+
+apply_loyalty_rewards(Input.cart.line_items)
+
+Output.cart = Input.cart
 ```
 
 ### Hide the Loyalty Reward product from public and go live
