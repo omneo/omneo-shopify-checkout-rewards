@@ -12,8 +12,8 @@ This is used by the checkout script and component to apply dynamic rewards to a 
 ### Create component snippet
 Create a new snippet in your Shopify theme called `omneo-checkout-rewards.liquid` and copy the following code into the start of the file. Add your Omneo url, token, profile id and the Shopify Variant ID of your Loyalty Reward product.
 ```
-{% assign omneoUrl = '' %}
-{% assign omneoToken = '' %}
+{% assign omneoUrl = 'XXX' %}
+{% assign omneoToken = 'XXX' %}
 ```
 Once the variables are added, add the following code to complete the snippet:
 ```
@@ -80,7 +80,7 @@ If you haven't already installed the Shopify Scripts app, follow the instruction
 Navigate to the Shopify Scripts app and create a new `Line Items` script with a blank template. Copy the following script and ensure the reward variable id is updated to reflect your own Loyalty Reward product:
 
 ```
-LOYALTY_ITEM_VARIATION_ID = 7289148866595;
+LOYALTY_ITEM_VARIATION_ID = XXX;
 
 def get_applied_loyalty_rewards(line_items)
  reward_amount = 0;
