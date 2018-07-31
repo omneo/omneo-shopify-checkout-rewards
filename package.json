@@ -1,6 +1,6 @@
 {
   "name": "omneo-shopify-checkout-rewards",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Omneo reward component for Shopify checkout",
   "main": "index.js",
   "scripts": {
