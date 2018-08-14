@@ -40,7 +40,6 @@ export default {
             request.url,
             {
                 method: request.method,
-                body: request.data ? JSON.stringify(request.data) : {},
                 headers: new Headers({
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
