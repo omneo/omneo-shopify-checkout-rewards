@@ -128,7 +128,7 @@ export default class extends preact.Component {
                         <h3 style="margin-bottom: 20px;">Loyalty rewards available: ${maxBalance}</h3>
                         <div className="field__input-btn-wrapper">
                             <div className="field__input-wrapper">
-                                <label className="field__label field__label--visible" htmlFor="checkout_reduction_code">Rewards {isRewardApplied ? "applied" : "available"} ($)</label>
+                                <label className="field__label field__label--visible" htmlFor="checkout_reduction_code">{isRewardApplied ? "Rewards applied" : "Apply reward value"} ($)</label>
                                 <input
                                     placeholder="0"
                                     className="field__input"
