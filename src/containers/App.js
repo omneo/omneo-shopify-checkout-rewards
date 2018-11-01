@@ -20,11 +20,11 @@ export default class extends preact.Component {
 
     handleRequest(){
         const {environment} = this.state;
-        const {omneoUrl, omneoToken, omneoProfileId} = environment;
+        const {omneoUrl, omneoToken, shopifyProfileId} = environment;
         if(omneoToken){
             this.requestBalance(omneoToken);
         }else{
-            this.refreshToken(omneoProfileId).then(response=>{
+            this.refreshToken(shopifyProfileId).then(response=>{
                 this.requestBalance(response.data.token);
             });
         }
@@ -32,10 +32,10 @@ export default class extends preact.Component {
 
     refreshToken(){
         const {environment} = this.state;
-        const {omneoUrl, omneoProfileId} = environment;
+        const {omneoUrl, shopifyProfileId} = environment;
         return request.refreshToken({
             url: omneoUrl+'/auth/token',
-            id: omneoProfileId
+            id: shopifyProfileId
         }).then(response=>{
             return response.data && response.data.token ? response.data.token : false;
         }).catch(error=>{

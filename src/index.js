@@ -4,7 +4,7 @@ import ready from 'document-ready-promise';
 
 const build = (environment) => {
     window.OmneoShopifyCheckoutRewards_config = environment;
-    if(!environment.omneoUrl || !environment.omneoProfileId || !environment.rewardVariantId){return;}
+    if(!environment.omneoUrl || !environment.shopifyProfileId || !environment.rewardVariantId){return;}
 
     ready().then(()=>{
         const summarySections = document.getElementsByClassName('order-summary__sections');

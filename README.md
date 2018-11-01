@@ -28,11 +28,11 @@ Once the variables are added, add the following code to complete the snippet:
     {% endif %}
 {% endfor %}
 {% assign omneoToken = false %}
-{% assign omneoProfileId = false %}
+{% assign shopifyProfileId = false %}
 {% if customer != blank %}
 	{% if customer.metafields.omneo != blank %}
 		{% assign omneoToken = customer.metafields.omneo.token %}
-		{% assign omneoProfileId = customer.id %}
+		{% assign shopifyProfileId = customer.id %}
 	{% endif %}
 {% endif %}
 <style>
@@ -45,7 +45,7 @@ Once the variables are added, add the following code to complete the snippet:
 	OmneoShopifyCheckoutRewards.build({
       omneoUrl: '{{omneoUrl}}',
       omneoToken: '{{omneoToken}}',
-      omneoProfileId: '{{omneoProfileId}}',
+      shopifyProfileId: '{{shopifyProfileId}}',
       rewardVariantId: {{rewardVariantId}},
       subTotal: {{ checkout.subtotal_price}},
       rewardApplied: {{rewardApplied}}
