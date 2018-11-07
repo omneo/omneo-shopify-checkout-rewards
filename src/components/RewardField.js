@@ -115,8 +115,8 @@ export default class extends preact.Component {
     }
 
     getMaxDisplay(){
-        const {maxBalance} = props;
-        const {redeem} = state;
+        const {maxBalance} = this.props;
+        const {redeem} = this.state;
 
         if(redeem){
             return [
