@@ -114,11 +114,11 @@ export default class extends preact.Component {
         return this.props.environment.rewardApplied !== false;
     }
 
-    getMaxDisplay(){
+    getMaxDisplay(isRewardApplied){
         const {maxBalance} = this.props;
         const {redeem} = this.state;
 
-        if(redeem){
+        if(isRewardApplied){
             return [
                 <span key="max" style={{textDecoration:'line-through', opacity: .5, marginRight: '5px'}}>${maxBalance}</span>,
                 <span key="redeem">${parseFloat(maxBalance) - parseFloat(redeem)} (after checkout)</span>
@@ -138,7 +138,7 @@ export default class extends preact.Component {
             <div className="fieldset">
                 <form onSubmit={isRewardApplied ? this.removeRewards : this.applyRewards}>
                     <div className="field field--show-floating-label">
-                        <h3 style="margin-bottom: 20px;">Loyalty rewards available: {this.getMaxDisplay()}</h3>
+                        <h3 style="margin-bottom: 20px;">Loyalty rewards available: {this.getMaxDisplay(isRewardApplied)}</h3>
                         <div className="field__input-btn-wrapper">
                             <div className="field__input-wrapper">
                                 <label className="field__label field__label--visible" htmlFor="checkout_reduction_code">{isRewardApplied ? "Rewards applied" : "Apply reward value"} ($)</label>
