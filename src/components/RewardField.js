@@ -120,8 +120,8 @@ export default class extends preact.Component {
 
         if(redeem){
             return [
-                <span key="max" style={{textDecoration:'line-through', opacity: .5, marginRight: '5px'}}>'$'+maxBalance</span>,
-                <span key="redeem">${maxBalance - redeem} (after checkout)</span>
+                <span key="max" style={{textDecoration:'line-through', opacity: .5, marginRight: '5px'}}>${maxBalance}</span>,
+                <span key="redeem">${parseFloat(maxBalance) - parseFloat(redeem)} (after checkout)</span>
             ]
         }
         return '$'+maxBalance
