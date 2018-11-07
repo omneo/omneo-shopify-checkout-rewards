@@ -14,27 +14,43 @@ Create a new snippet in your Shopify theme called `omneo-checkout-rewards.liquid
 ```
 {% assign omneoUrl = 'https://plugin-shopify.{environment}.omneoapp.com/api/v1' %}
 {% comment %}rewardVariantId Must be Integer{% endcomment %}
-{% assign rewardVariantId = 0 %} 
+{% assign rewardVariantId = 99999999999999 %} 
 ```
 Once the variables are added, add the following code to complete the snippet:
 ```
-{% assign rewardApplied = false %}
-{% for line_item in checkout.line_items %}
-  	{% if line_item.variant_id == rewardVariantId %}
-		{% for property in line_item.properties %}
-			{% if property[0] == 'amount' %}
-				{% assign rewardApplied = property[1] %}
-			{% endif %}
-		{% endfor %}
-    {% endif %}
-{% endfor %}
-{% assign omneoToken = false %}
-{% assign shopifyProfileId = false %}
 {% if customer != blank %}
-	{% if customer.metafields.omneo != blank %}
-		{% assign omneoToken = customer.metafields.omneo.token %}
-		{% assign shopifyProfileId = customer.id %}
-	{% endif %}
+    {% assign rewardApplied = false %}
+
+    {% for line_item in checkout.line_items %}
+        {% if line_item.variant_id == rewardVariantId %}
+            {% for property in line_item.properties %}
+                {% if property[0] == 'amount' %}
+                    {% assign rewardApplied = property[1] %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+    {% assign omneoToken = false %}
+    {% assign shopifyProfileId = false %}
+    {% assign shopifyProfileId = customer.id %}
+
+    {% if customer.metafields.omneo != blank %}
+        {% assign omneoToken = customer.metafields.omneo.token %}
+    {% endif %}
+
+    <script type="text/javascript" src="//cdn.omneo.io/omneo-shopify-checkout-rewards.js"></script>
+    <script>
+      OmneoShopifyCheckoutRewards.build({
+        omneoUrl: '{{omneoUrl}}',
+        omneoToken: '{{omneoToken}}',
+        shopifyProfileId: '{{shopifyProfileId}}',
+        rewardVariantId: {{rewardVariantId}},
+      subTotal: {{ checkout.subtotal_price}},
+      rewardApplied: {{rewardApplied}}
+      });
+    </script>
+
 {% endif %}
 <style>
   .product[data-variant-id="{{rewardVariantId}}"]{display:none}
