@@ -60,13 +60,15 @@ Once the variables are added, add the following code to complete the snippet:
 <script type="text/javascript" src="//cdn.omneo.io/omneo-shopify-checkout-rewards.js"></script>
 <script>
 	OmneoShopifyCheckoutRewards.build({
-      omneoUrl: '{{omneoUrl}}',
-      omneoToken: '{{omneoToken}}',
-      shopifyProfileId: '{{shopifyProfileId}}',
-      rewardVariantId: {{rewardVariantId}},
-      subTotal: {{ checkout.subtotal_price}},
-      rewardApplied: {{rewardApplied}}
-    })    
+    omneoUrl: '{{omneoUrl}}',
+    omneoToken: '{{omneoToken}}',
+    shopifyProfileId: '{{shopifyProfileId}}',
+    rewardVariantId: {{rewardVariantId}},
+    subTotal: {{ checkout.subtotal_price}},
+    rewardApplied: {{rewardApplied}},
+    title: "Loyalty rewards available:",
+    hideIfInactive: false
+  })    
 </script>
 ```
 

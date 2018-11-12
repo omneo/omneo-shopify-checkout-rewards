@@ -14,6 +14,22 @@ export default class extends preact.Component {
         this.removeRewards = this.removeRewards.bind(this);
     }
 
+    checkCartCanUseReward(){
+        const isRewardApplied = this.isRewardApplied();
+        if(!isRewardApplied){return}
+
+        const {maxBalance} = this.props;
+        const {redeem} = this.state;
+
+        if(maxBalance <= 0 || parseFloat(redeem) > parseFloat(maxBalance)){
+            this.removeRewards();
+        }
+    }
+
+    componentDidMount(){
+        this.checkCartCanUseReward();
+    }
+
     getMax(){
         const {environment, maxBalance} = this.props;
         const {subTotal} = environment;
@@ -128,9 +144,14 @@ export default class extends preact.Component {
     }
 
     render(props, state) {
-        const {maxBalance} = props;
+        const {maxBalance, environment} = props;
         const {redeem, loading} = state;
-        const buttonDisabled = loading || redeem === '' || redeem == 0 || maxBalance == 0;
+        const {title = "Loyalty rewards available:"} = environment;
+        const buttonDisabled = loading || redeem === '' || redeem == 0 || maxBalance <= 0;
+
+        if(environment.hideIfInactive && maxBalance <= 0){
+            return null
+        }
 
         const isRewardApplied = this.isRewardApplied();
 
@@ -138,7 +159,7 @@ export default class extends preact.Component {
             <div className="fieldset">
                 <form onSubmit={isRewardApplied ? this.removeRewards : this.applyRewards}>
                     <div className="field field--show-floating-label">
-                        <h3 style="margin-bottom: 20px;">Loyalty rewards available: {this.getMaxDisplay(isRewardApplied)}</h3>
+                        <h3 style="margin-bottom: 20px;">{title} {this.getMaxDisplay(isRewardApplied)}</h3>
                         <div className="field__input-btn-wrapper">
                             <div className="field__input-wrapper">
                                 <label className="field__label field__label--visible" htmlFor="checkout_reduction_code">{isRewardApplied ? "Rewards applied" : "Apply reward value"} ($)</label>
