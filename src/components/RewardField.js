@@ -144,9 +144,8 @@ export default class extends preact.Component {
     }
 
     render(props, state) {
-        const {maxBalance, environment} = props;
+        const {maxBalance, environment, title} = props;
         const {redeem, loading} = state;
-        const {title = "Loyalty rewards available:"} = environment;
         const buttonDisabled = loading || redeem === '' || redeem == 0 || maxBalance <= 0;
 
         if(environment.hideIfInactive && maxBalance <= 0){

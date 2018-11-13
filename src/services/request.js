@@ -11,12 +11,15 @@ export default {
                 })
             })
             .then(response=>{
+                // console.log(response);
                 if(!response.ok){throw response;}
                 return fetch('/pages/omneotoken',{credentials: 'include'}).then(function(response){
                     return response.text().then(function(text){
                         var myRegexp = /\<TOKEN\>(.*)\<TOKEN\>/;
                         var match = myRegexp.exec(text);
-                        console.log("match",match);
+
+                        // console.log(match[1]);
+
                         return {
                             data:{
                                 token: match[1]
@@ -27,10 +30,10 @@ export default {
             })
             .catch(response=> {
                 throw response.json().then(json=>{
-                    console.log('Error with JSON');
+                    // console.log('Error with JSON');
                     return Promise.resolve({response: response, json: json})
                 }).catch(response=>{
-                    console.log('Error no JSON');
+                    // console.log('Error no JSON');
                     return {response: response, json: {}}
                 });
             });
@@ -54,10 +57,10 @@ export default {
             })
             .catch(response=> {
                 throw response.json().then(json=>{
-                    console.log('Error with JSON');
+                    // console.log('Error with JSON');
                     return Promise.resolve({response: response, json: json})
                 }).catch(response=>{
-                    console.log('Error no JSON');
+                    // console.log('Error no JSON');
                     return {response: response, json: {}}
                 });
             });

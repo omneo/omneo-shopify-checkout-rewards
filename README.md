@@ -32,44 +32,36 @@ Once the variables are added, add the following code to complete the snippet:
     {% endfor %}
 
     {% assign omneoToken = false %}
-    {% assign shopifyProfileId = false %}
     {% assign shopifyProfileId = customer.id %}
 
     {% if customer.metafields.omneo != blank %}
-        {% assign omneoToken = customer.metafields.omneo.token %}
+        {% assign omneoToken = customer.metafields.omneo.token | append: "'" | prepend: "'" %}
     {% endif %}
 
     <script type="text/javascript" src="//cdn.omneo.io/omneo-shopify-checkout-rewards.js"></script>
     <script>
       OmneoShopifyCheckoutRewards.build({
-        omneoUrl: '{{omneoUrl}}',
-        omneoToken: '{{omneoToken}}',
-        shopifyProfileId: '{{shopifyProfileId}}',
-        rewardVariantId: {{rewardVariantId}},
-      subTotal: {{ checkout.subtotal_price}},
-      rewardApplied: {{rewardApplied}}
+          omneoUrl: '{{omneoUrl}}',
+          omneoToken: {{omneoToken}},
+          shopifyProfileId: {{shopifyProfileId}},
+          rewardVariantId: {{rewardVariantId}},
+          subTotal: {{ checkout.subtotal_price}},
+          rewardApplied: {{rewardApplied}},
+          title: 'Loyalty rewards available:',
+          errorMessage: '',
+          loadingMessage: '',
+          supportEmail: '',
+          hideIfInactive: false,
+          loadingMessage = "Just a moment as we set up your account",
+          errorMessage: "There was an issue getting your rewards. Please try again shortly or get in touch with customer support."
       });
     </script>
-
 {% endif %}
 <style>
   .product[data-variant-id="{{rewardVariantId}}"]{display:none}
   .product[data-variant-id="{{rewardVariantId}}"]:first-child + tr .product__description{padding-top:0;}
   .product[data-variant-id="{{rewardVariantId}}"]:first-child + tr .product__image{padding-top:0;}
 </style>
-<script type="text/javascript" src="//cdn.omneo.io/omneo-shopify-checkout-rewards.js"></script>
-<script>
-	OmneoShopifyCheckoutRewards.build({
-    omneoUrl: '{{omneoUrl}}',
-    omneoToken: '{{omneoToken}}',
-    shopifyProfileId: '{{shopifyProfileId}}',
-    rewardVariantId: {{rewardVariantId}},
-    subTotal: {{ checkout.subtotal_price}},
-    rewardApplied: {{rewardApplied}},
-    title: "Loyalty rewards available:",
-    hideIfInactive: false
-  })    
-</script>
 ```
 
 ### Update checkout.liquid
