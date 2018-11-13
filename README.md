@@ -48,12 +48,10 @@ Once the variables are added, add the following code to complete the snippet:
           subTotal: {{ checkout.subtotal_price}},
           rewardApplied: {{rewardApplied}},
           title: 'Loyalty rewards available:',
-          errorMessage: '',
-          loadingMessage: '',
-          supportEmail: '',
-          hideIfInactive: false,
           loadingMessage = "Just a moment as we set up your account",
           errorMessage: "There was an issue getting your rewards. Please try again shortly or get in touch with customer support."
+          supportEmail: false,
+          hideIfInactive: false
       });
     </script>
 {% endif %}
