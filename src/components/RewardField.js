@@ -18,10 +18,10 @@ export default class extends preact.Component {
         const isRewardApplied = this.isRewardApplied();
         if(!isRewardApplied){return}
 
-        const {maxBalance} = this.props;
+        const max = this.getMax();
         const {redeem} = this.state;
 
-        if(maxBalance <= 0 || parseFloat(redeem) > parseFloat(maxBalance)){
+        if(max <= 0 || parseFloat(redeem) > parseFloat(max)){
             this.removeRewards();
         }
     }
