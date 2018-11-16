@@ -15,15 +15,15 @@ export default class extends preact.Component {
     }
 
     checkCartCanUseReward(){
-        const isRewardApplied = this.isRewardApplied();
-        if(!isRewardApplied){return}
+        // const isRewardApplied = this.isRewardApplied();
+        // if(!isRewardApplied){return}
 
-        const max = this.getMax();
-        const {redeem} = this.state;
+        // const max = this.getMax();
+        // const {redeem} = this.state;
 
-        if(max <= 0 || parseFloat(redeem) > parseFloat(max)){
-            this.removeRewards();
-        }
+        // if(max <= 0 || parseFloat(redeem) > parseFloat(max)){
+        //     this.removeRewards();
+        // }
     }
 
     componentDidMount(){
