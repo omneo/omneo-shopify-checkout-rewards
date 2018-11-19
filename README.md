@@ -163,7 +163,7 @@ def apply_loyalty_rewards(line_items)
         discount_float = (reward_amount * proportion) + reward_remainder
         discount = discount_float.round
         reward_remainder =  discount_float - discount
-        line_item.change_line_price(line_item.line_price - Money.new(cents: discount), message: 'Academy Reward')
+        line_item.change_line_price(line_item.line_price - Money.new(cents: discount), message: 'Reward')
       end
     end
   end
