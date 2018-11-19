@@ -137,7 +137,7 @@ export default class extends preact.Component {
         if(isRewardApplied){
             return [
                 <span key="max" style={{textDecoration:'line-through', opacity: .5, marginRight: '5px'}}>${maxBalance}</span>,
-                <span key="redeem">${parseFloat(maxBalance) - parseFloat(redeem)} (after checkout)</span>
+                <span key="redeem">${(parseFloat(maxBalance) - parseFloat(redeem)).toFixed(2)} (after checkout)</span>
             ]
         }
         return '$'+maxBalance

@@ -10,22 +10,30 @@ Add a new product to Shopify with the description of `Loyalty Reward` or eqivale
 This is used by the checkout script and component to apply dynamic rewards to a transaction.
 
 ### Create component snippet
-Create a new snippet in your Shopify theme called `omneo-checkout-rewards.liquid` and copy the following code into the start of the file. Add your Omneo url, token, profile id and the Shopify Variant ID of your Loyalty Reward product.
+Create a new snippet in your Shopify theme called `omneo-checkout-rewards.liquid` and copy the following code into the start of the file. Add your Omneo url, token, profile id and the Shopify Variant ID of your Loyalty Reward product. Please ensure the `rewardVariantId` is an integer.
 ```
 {% assign omneoUrl = 'https://plugin-shopify.{environment}.omneoapp.com/api/v1' %}
-{% comment %}rewardVariantId Must be Integer{% endcomment %}
-{% assign rewardVariantId = 99999999999999 %} 
+{% assign rewardVariantId = 0 %} 
+{% assign ignoreGiftCards = true %} 
 ```
 Once the variables are added, add the following code to complete the snippet:
 ```
 {% if customer != blank %}
     {% assign rewardApplied = false %}
+    {% assign subtotalCalculated = checkout.subtotal_price %}
+    {% assign subtotalFromAppliedReward = false %}
 
     {% for line_item in checkout.line_items %}
+        {% if line_item.gift_card and ignoreGiftCards %}
+            {% assign subtotalCalculated = subtotalCalculated | minus: line_item.original_price %}
+        {% endif %}
         {% if line_item.variant_id == rewardVariantId %}
             {% for property in line_item.properties %}
                 {% if property[0] == 'amount' %}
                     {% assign rewardApplied = property[1] %}
+                {% endif %}
+                {% if property[0] == 'subtotal' %}
+                    {% assign subtotalFromAppliedReward = property[1] %}
                 {% endif %}
             {% endfor %}
         {% endif %}
@@ -38,6 +46,10 @@ Once the variables are added, add the following code to complete the snippet:
         {% assign omneoToken = customer.metafields.omneo.token | append: "'" | prepend: "'" %}
     {% endif %}
 
+    {% if subtotalFromAppliedReward %}
+        {% assign subtotalCalculated = subtotalFromAppliedReward %}
+    {% endif %}
+
     <script type="text/javascript" src="//cdn.omneo.io/omneo-shopify-checkout-rewards.js"></script>
     <script>
       OmneoShopifyCheckoutRewards.build({
@@ -45,11 +57,11 @@ Once the variables are added, add the following code to complete the snippet:
           omneoToken: {{omneoToken}},
           shopifyProfileId: {{shopifyProfileId}},
           rewardVariantId: {{rewardVariantId}},
-          subTotal: {{ checkout.subtotal_price}},
+          subTotal: {{subtotalCalculated}},
           rewardApplied: {{rewardApplied}},
           title: 'Loyalty rewards available:',
-          loadingMessage = "Just a moment as we set up your account",
-          errorMessage: "There was an issue getting your rewards. Please try again shortly or get in touch with customer support."
+          loadingMessage: "Just a moment as we set up your account",
+          errorMessage: "There was an issue getting your rewards. Please try again shortly or get in touch with customer support.",
           supportEmail: false,
           hideIfInactive: false
       });
@@ -89,40 +101,72 @@ If you haven't already installed the Shopify Scripts app, follow the instruction
 Navigate to the Shopify Scripts app and create a new `Line Items` script with a blank template. Copy the following script and ensure the reward variable id is updated to reflect your own Loyalty Reward product:
 
 ```
-LOYALTY_ITEM_VARIATION_ID = XXX;
+LOYALTY_ITEM_VARIATION_ID = 0
+IGNORE_GIFT_CARDS = true
+
+def get_valid_cart_amount(line_items)
+  cart_amount = Integer(Input.cart.subtotal_price.cents.round.to_s)
+
+  if line_items.kind_of?(Array)
+    line_items.each do |line_item|
+      if IGNORE_GIFT_CARDS and line_item.variant.product.gift_card?
+        cart_amount = cart_amount - Integer(line_item.line_price.cents.round.to_s)
+      end
+    end
+  end
+  
+  cart_amount
+end
 
 def get_applied_loyalty_rewards(line_items)
- reward_amount = 0;
+  reward_amount = 0;
+  cart_amount = get_valid_cart_amount(line_items)
 
- if line_items.kind_of?(Array)
-   line_items.each do |line_item|
-     if line_item.variant.id == LOYALTY_ITEM_VARIATION_ID
-       next unless line_item.properties['amount']
-       reward_amount += Integer(line_item.properties['amount']*100)
-     end
-   end
- end
+  if line_items.kind_of?(Array)
+    line_items.each do |line_item|
+      if line_item.variant.id == LOYALTY_ITEM_VARIATION_ID
+        next unless line_item.properties['amount']
+        reward_amount = Integer(line_item.properties['amount'] * 100)
 
- reward_amount
+        if reward_amount > cart_amount
+          reward_amount = cart_amount
+          line_item.change_properties({
+            'amount' => Integer(cart_amount * 0.01),
+            'subtotal' => Integer(cart_amount)
+          },{ message: 'Updated value' })  
+        else
+          line_item.change_properties({
+            'amount' => Integer(reward_amount * 0.01),
+            'subtotal' => Integer(cart_amount)
+          },{ message: 'Updated value' })  
+        end
+      end
+    end
+  end
+  
+  reward_amount
 end
 
 def apply_loyalty_rewards(line_items)
- reward_amount = get_applied_loyalty_rewards(line_items)
- reward_remainder = 0.0
- total_reward_elegible_price = Integer(Input.cart.subtotal_price.cents.to_s)
+  reward_amount = get_applied_loyalty_rewards(line_items)
+  return unless 0 < reward_amount
 
- if line_items.kind_of?(Array)
-   line_items.each do |line_item|
-      price = Integer(line_item.line_price.cents.to_s)
+  reward_remainder = 0.0
+  total_reward_elegible_price = get_valid_cart_amount(line_items)
+
+  if line_items.kind_of?(Array)
+    line_items.each do |line_item|
+      next unless !IGNORE_GIFT_CARDS or !line_item.variant.product.gift_card?
+      price = Integer(line_item.line_price.cents.round.to_s)
       if price > 0
-       proportion =  price / total_reward_elegible_price
-       discount_float = (reward_amount * proportion) + reward_remainder
-       discount = discount_float.round
-       reward_remainder =  discount_float - discount
-       line_item.change_line_price(line_item.line_price - Money.new(cents: discount), message: 'Loyalty Rewards')
+        proportion =  price / total_reward_elegible_price
+        discount_float = (reward_amount * proportion) + reward_remainder
+        discount = discount_float.round
+        reward_remainder =  discount_float - discount
+        line_item.change_line_price(line_item.line_price - Money.new(cents: discount), message: 'Academy Reward')
       end
-   end
- end
+    end
+  end
 end
 
 apply_loyalty_rewards(Input.cart.line_items)
