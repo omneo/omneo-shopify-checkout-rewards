@@ -126,18 +126,18 @@ def get_applied_loyalty_rewards(line_items)
     line_items.each do |line_item|
       if line_item.variant.id == LOYALTY_ITEM_VARIATION_ID
         next unless line_item.properties['amount']
-        reward_amount = Integer(line_item.properties['amount'] * 100)
+        reward_amount = Float(line_item.properties['amount']) * 100
 
         if reward_amount > cart_amount
           reward_amount = cart_amount
           line_item.change_properties({
-            'amount' => Integer(cart_amount * 0.01),
-            'subtotal' => Integer(cart_amount)
+            'amount' => cart_amount * 0.01,
+            'subtotal' => cart_amount
           },{ message: 'Updated value' })  
         else
           line_item.change_properties({
-            'amount' => Integer(reward_amount * 0.01),
-            'subtotal' => Integer(cart_amount)
+            'amount' => reward_amount * 0.01,
+            'subtotal' => cart_amount
           },{ message: 'Updated value' })  
         end
       end
