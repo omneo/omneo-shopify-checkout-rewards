@@ -143,6 +143,11 @@ export default class extends preact.Component {
         return '$'+maxBalance
     }
 
+    getSvg(){
+        var useTag = '<use xlink:href="/svg/svg-sprite#my-icon" />';
+        return <svg dangerouslySetInnerHTML={{__html: useTag }} />;
+    }
+
     render(props, state) {
         const {maxBalance, environment, title} = props;
         const {redeem, loading} = state;
@@ -180,10 +185,34 @@ export default class extends preact.Component {
                                 onClick={isRewardApplied ? this.removeRewards : this.applyRewards}
                                 className={this.buttonClasses()}
                                 style={buttonDisabled ? "background-color:#c8c8c8 !important":""}
-                                disabled={buttonDisabled}>
+                                disabled={buttonDisabled}
+                                aria-busy={loading}
+                            >
                                 <span className="btn__content visually-hidden-on-mobile">{isRewardApplied ? "Remove" : "Apply"}</span>
-                                <i className="btn__content shown-on-mobile icon icon--arrow" />
-                                <i className="btn__spinner icon icon--button-spinner" />
+                                
+                                {
+                                    isRewardApplied ? (
+                                        <svg 
+                                            class="icon-svg icon-svg--size-16 btn__icon shown-on-mobile" 
+                                            aria-hidden={loading} 
+                                            focusable="false"
+                                            dangerouslySetInnerHTML={{__html:'<use xlink:href="#close" />'}}
+                                        />
+                                    ):(
+                                        <svg 
+                                            class="icon-svg icon-svg--size-16 btn__icon shown-on-mobile" 
+                                            aria-hidden={loading} 
+                                            focusable="false"
+                                            dangerouslySetInnerHTML={{__html:'<use xlink:href="#arrow" />'}}
+                                        />
+                                    )
+                                }
+                                <svg 
+                                    class="icon-svg icon-svg--size-18 btn__spinner icon-svg--spinner-button" 
+                                    aria-hidden={!loading} 
+                                    focusable="false" 
+                                    dangerouslySetInnerHTML={{__html:'<use xlink:href="#spinner-button" />'}}
+                                />
                             </button>
                         </div>
                         <small style="margin-top: 10px;display:block;line-height:1;">Rewards are not redeemable against gift cards or shipping</small>
