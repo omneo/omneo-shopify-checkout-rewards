@@ -15,8 +15,21 @@ export default class extends preact.Component {
         };
     }
 
+    expandContainer(){
+        const {autoExpandSummary} = this.props.environment;
+        if(!autoExpandSummary){return}
+
+        // Expand summary view on mobile, if closed
+        var summaryButton = document.querySelector('[data-trekkie-id="order_summary_toggle"]');
+        var isExpanded = summaryButton.getAttribute("aria-expanded");
+        if(isExpanded === 'false'){
+            summaryButton.click();	
+        }
+    }
+
     componentDidMount(){
         this.handleRequest();
+        this.expandContainer();
     }
 
     handleRequest(){
