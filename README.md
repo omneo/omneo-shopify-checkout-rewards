@@ -1,3 +1,5 @@
+##  - This repo contains legacy code which will eventually be phased out. use [omneo-shapes-shopify-rewards](https://github.com/omneo/omneo-shapes-shopify-rewards) instead. -
+
 # Shopify Checkout Reward Component
 A small package for checking and applying an Omneo reward balance to Shopify Checkout. This component uses `Preact` for dom manipulation and `Unfetch` to polyfill modern `fetch` functionality.
 
@@ -13,8 +15,8 @@ This is used by the checkout script and component to apply dynamic rewards to a 
 Create a new snippet in your Shopify theme called `omneo-checkout-rewards.liquid` and copy the following code into the start of the file. Add your Omneo url, token, profile id and the Shopify Variant ID of your Loyalty Reward product. Please ensure the `rewardVariantId` is an integer.
 ```
 {% assign omneoUrl = 'https://plugin-shopify.{environment}.omneoapp.com/api/v1' %}
-{% assign rewardVariantId = 0 %} 
-{% assign ignoreGiftCards = true %} 
+{% assign rewardVariantId = 0 %}
+{% assign ignoreGiftCards = true %}
 ```
 Once the variables are added, add the following code to complete the snippet:
 ```
@@ -115,7 +117,7 @@ def get_valid_cart_amount(line_items)
       end
     end
   end
-  
+
   cart_amount
 end
 
@@ -144,7 +146,7 @@ def get_applied_loyalty_rewards(line_items)
       end
     end
   end
-  
+
   reward_amount
 end
 
@@ -190,6 +192,3 @@ yarn install
 yarn watch
 ```
 This component requires a Shopify Checkout environment and liquid code to function correctly. Local development should be completed using ThemeKit or by including the local main.js file in a development theme, through port forwarding such as NGROK etc.
-
-
-
