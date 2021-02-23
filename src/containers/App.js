@@ -20,10 +20,10 @@ export default class extends preact.Component {
         if(!autoExpandSummary){return}
 
         // Expand summary view on mobile, if closed
-        var summaryButton = document.querySelector('[data-trekkie-id="order_summary_toggle"]');
+        var summaryButton = document.querySelector('aside[role="complementary"] .order-summary-toggle');
         var isExpanded = summaryButton.getAttribute("aria-expanded");
         if(isExpanded === 'false'){
-            summaryButton.click();	
+            summaryButton.click();
         }
     }
 
@@ -58,14 +58,14 @@ export default class extends preact.Component {
             url: omneoUrl+'/auth/token',
             id: shopifyProfileId
         }).then(response=>{
-            
+
             const token =  response.data && response.data.token ? response.data.token : false;
             if(token){
                 // console.log('Refresh success', token);
                 this.requestBalance(token, attempt);
                 return token;
             }
-            
+
             this.retry(attempt+1);
         }).catch(error=>{
             // console.log('Refresh error', error);
@@ -73,7 +73,7 @@ export default class extends preact.Component {
         });
     }
 
-    requestBalance(token, attempt = 4) {  
+    requestBalance(token, attempt = 4) {
         const {omneoUrl} = this.props.environment;
         request.call({
             url: omneoUrl+'/proxy/me/balances',
@@ -99,14 +99,14 @@ export default class extends preact.Component {
             hideIfInactive,
             supportEmail,
             title = 'Loyalty rewards available:',
-            errorMessage = "There was an issue retrieving your reward balance. Please try again shortly or get in touch with customer support.", 
+            errorMessage = "There was an issue retrieving your reward balance. Please try again shortly or get in touch with customer support.",
             loadingMessage = "Just a moment as we set up your account"
         } = environment;
-        
+
         if(!init){
             return(
                 <RewardPlaceholder
-                    loadingMessage={attempts > 0 ? loadingMessage : false} 
+                    loadingMessage={attempts > 0 ? loadingMessage : false}
                     errorMessage={attempts >= 5 ? errorMessage : false}
                     supportEmail={supportEmail}
                     title={title}
