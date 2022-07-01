@@ -149,13 +149,15 @@ export default class extends preact.Component {
     }
 
     render(props, state) {
-        const {maxBalance, environment, title} = props;
+        const {maxBalance, environment, title, hide_remove_reward = false} = props;
         const {redeem, loading} = state;
         const buttonDisabled = loading || redeem === '' || redeem == 0 || maxBalance <= 0;
 
         if(environment.hideIfInactive && maxBalance <= 0){
             return null
         }
+
+        if(!hide_remove_reward) return null;
 
         const isRewardApplied = this.isRewardApplied();
 
